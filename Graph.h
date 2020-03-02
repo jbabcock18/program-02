@@ -32,6 +32,10 @@ class Vertex {
             Edge<T> e(edge);
             edges.push_back(e);
         }
+
+        vector<Edge<T> > getEdges() {
+            return edges;
+        }
 };
 
 template <class T>
@@ -40,6 +44,9 @@ class Edge {
         Vertex<T>* vtx;
     public:
         Edge(Vertex<T>* v): vtx(v) {}
+        Vertex<T>* getVertex() {
+            return vtx;
+        }
 };
 
 
@@ -56,16 +63,49 @@ class Graph {
             graph.push_back(node);
         }
 
-        void listVerticies() {
+        void list() {
             typename vector<Vertex<T>*>::iterator iter;
 
             for (iter = graph.begin(); iter != graph.end(); iter++) {
-                cout << (*iter)->getData() << "\t";
+                cout << (*iter)->getData() << ": ";
+                vector<Edge<T> > edges = (*iter)->getEdges();
+                for (int i = 0; i < edges.size(); i++) {
+                    cout << edges[i].getVertex()->getData() << ", ";
+                }
+                cout << endl;
+                
             }
             cout << endl;
         }
 
-        void addEdge() {
+        void addEdge(T const &source, T const &dest) {
+            bool sourceFound = false;
+            bool destFound = false;
+            Vertex<T>* sourceEdge;
+            Vertex<T>* destEdge;
+
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == source) {
+                    sourceFound = true;
+                    sourceEdge = *iter;
+                }
+
+                if ((*iter)->getData() == dest) {
+                    destEdge = *iter;
+                    destFound = true;
+                }
+            }
+            if (sourceFound && destFound) {
+                sourceEdge->addEdge(destEdge);
+                destEdge->addEdge(sourceEdge); // undirected so you add both ways
+            }
+            else {
+                cout << "Error adding edge" << endl;
+            }
+
         }
+
+
         
 };

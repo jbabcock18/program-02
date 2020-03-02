@@ -21,8 +21,12 @@ class Vertex {
     private:
         vector<Edge<T> > edges;
         T data;
+        bool visited;
     public:
-        Vertex(T info): data(info) {}
+        Vertex(T info) {
+            data = info;
+            visited = false;
+        }
 
         T getData() {
             return data;
@@ -35,6 +39,14 @@ class Vertex {
 
         vector<Edge<T> > getEdges() {
             return edges;
+        }
+
+        bool isVisited() {
+            return visited;
+        }
+
+        void visit() {
+            visited = true;
         }
 };
 
@@ -104,6 +116,23 @@ class Graph {
                 cout << "Error adding edge" << endl;
             }
 
+        }
+
+        void depthFirstSearch(T startNode, vector<T> &output) {
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == startNode && (*iter)->isVisited() == false) {
+                    output.push_back(startNode);
+                    (*iter)->visit(); // set visited to true
+                    for (int i = 0; i < (*iter)->getEdges().size(); i++) {
+                       depthFirstSearch((*iter)->getEdges()[i].getVertex()->getData() , output);
+                    }
+                }
+            }
+        }
+
+        vector<T> bredthFirstSearch(T startNode) {
+            
         }
 
 

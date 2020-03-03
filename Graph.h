@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -132,8 +133,30 @@ class Graph {
         }
 
         vector<T> bredthFirstSearch(T startNode) {
+            typename vector<Vertex<T>*>::iterator iter;
+            queue<Vertex<T>*> q;
+            vector<T> output;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == startNode) {
+                    q.push(*iter);
+                    (*iter)->visit();
+                }
+            }
+            while (!q.empty()) {
+                output.push_back(q.front()->getData());
+                vector<Edge<T> > nextEdges = q.front()->getEdges();
+                for (int i = 0; i < nextEdges.size(); i++) {
+                    if (!nextEdges[i].getVertex()->isVisited()) { // Visiting a new node
+                        q.push(nextEdges[i].getVertex());
+                        nextEdges[i].getVertex()->visit();
+                    }
+                }
+                q.pop();
+            }
+            return output;
             
         }
+
 
 
         

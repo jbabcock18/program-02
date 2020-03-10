@@ -26,8 +26,10 @@ int main(int argc, const char * argv[]) {
     g.addEdge("Pops", "Jack");
     g.addEdge("Alex", "Zurlo");
     g.addEdge("Christine", "Mom");
+    g.addEdge("Christine", "Dad");
     g.addEdge("Alex", "Dad");
     g.addEdge("Pops", "Dad");
+    g.addEdge("Jack", "Dad");
     g.list();
     vector<string> dfs;
     vector<string> bfs;
@@ -37,6 +39,8 @@ int main(int argc, const char * argv[]) {
         cout << bfs[i] << ", ";
     }
     cout << endl;
+    //g.reset();
+    g.makeConnection("Duke", "Dad");
     return 0;
 
 }

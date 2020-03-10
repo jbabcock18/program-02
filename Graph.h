@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -49,16 +50,31 @@ class Vertex {
         void visit() {
             visited = true;
         }
+
+        void unvisit() {
+            visited = false;
+        }
+        
+        Vertex<T>* cameFrom;
 };
 
 template <class T>
 class Edge {
     private:
         Vertex<T>* vtx;
+        double betweennesss;
     public:
-        Edge(Vertex<T>* v): vtx(v) {}
+        Edge(Vertex<T>* v): vtx(v) {
+            betweennesss = 0;
+        }
         Vertex<T>* getVertex() {
             return vtx;
+        }
+        void addBetweennesss(double num) {
+            betweennesss += num;
+        }
+        double getBetweenness() {
+            return betweennesss;
         }
 };
 
@@ -74,6 +90,13 @@ class Graph {
         void addVertex(T data) {
             Vertex<T>* node = new Vertex<T>(data);
             graph.push_back(node);
+        }
+
+        void reset() {
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                (*iter)->unvisit();
+            }
         }
 
         void list() {
@@ -157,7 +180,52 @@ class Graph {
             
         }
 
+        void makeConnection(T src, T dest) {
+            reset();
+            typename vector<Vertex<T>*>::iterator iter;
+            queue<Vertex<T>*> q;
+            bool found = false;
+            Vertex<T>* vtx; 
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == src) {
+                    q.push(*iter);
+                    (*iter)->visit();
+                }
+            }
+            // same as BFS.
+            while (!q.empty() && !found) {
+                vector<Edge<T> > nextEdges = q.front()->getEdges();
+                for (int i = 0; i < nextEdges.size(); i++) {
+                    if (!nextEdges[i].getVertex()->isVisited()) { // Visiting a new node
+                        q.push(nextEdges[i].getVertex());
+                        nextEdges[i].getVertex()->visit();
+                        nextEdges[i].getVertex()->cameFrom = q.front();
+                        if (nextEdges[i].getVertex()->getData() == dest) {
+                            found = true;
+                            vtx = nextEdges[i].getVertex();
+                        }
+                    }
+                }
+                q.pop();
+            }
+            stack<T> path;
+            while (vtx) { // while vtx is not undefined
+                path.push(vtx->getData());
+                vtx = vtx->cameFrom;
+            }
+            while (!path.empty()) {
+                cout << path.top() << " -> ";
+                path.pop();
+            }
+            cout << endl;
+        }
 
 
-        
+        void getBetweenness() {
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                bredthFirstSearch(iter->getData);
+            }
+        }
 };
+

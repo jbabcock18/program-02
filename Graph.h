@@ -56,6 +56,8 @@ class Vertex {
         }
         
         Vertex<T>* cameFrom;
+        int equalPaths = 1; // number of equally shortest paths
+        int layer = 1;
 };
 
 template <class T>
@@ -65,7 +67,7 @@ class Edge {
         double betweennesss;
     public:
         Edge(Vertex<T>* v): vtx(v) {
-            betweennesss = 0;
+            betweennesss = 1;
         }
         Vertex<T>* getVertex() {
             return vtx;
@@ -75,6 +77,9 @@ class Edge {
         }
         double getBetweenness() {
             return betweennesss;
+        }
+        void resetBetweenness() {
+            betweennesss = 1;
         }
 };
 
@@ -96,6 +101,8 @@ class Graph {
             typename vector<Vertex<T>*>::iterator iter;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
                 (*iter)->unvisit();
+                (*iter)->layer = 1;
+                (*iter)->equalPaths = 1;
             }
         }
 
@@ -201,6 +208,7 @@ class Graph {
                         nextEdges[i].getVertex()->visit();
                         nextEdges[i].getVertex()->cameFrom = q.front();
                         if (nextEdges[i].getVertex()->getData() == dest) {
+
                             found = true;
                             vtx = nextEdges[i].getVertex();
                         }
@@ -220,11 +228,40 @@ class Graph {
             cout << endl;
         }
 
+        void getNumberOfShortestPaths(T startNode) {
+            reset();
+            typename vector<Vertex<T>*>::iterator iter;
+            queue<Vertex<T>*> q;
+            Vertex<T>* curr;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == startNode) {
+                    q.push(*iter);
+                    (*iter)->visit();
+                }
+            }
+            while (!q.empty()) {
+                curr = q.front();
+                vector<Edge<T> > nextEdges = curr->getEdges();
+                for (int i = 0; i < nextEdges.size(); i++) {
+                    if (!nextEdges[i].getVertex()->isVisited()) { // Visiting a new node
+                        q.push(nextEdges[i].getVertex());
+                        nextEdges[i].getVertex()->visit();
+                        nextEdges[i].getVertex()->layer = curr->layer + 1;
+                    }
+                    else {
+                        if (nextEdges[i].getVertex()->layer == curr->layer + 1) {
+                            nextEdges[i].getVertex()->equalPaths++;
+                        }
+                    }
+                }
+                q.pop();
+            }
+        }
 
         void getBetweenness() {
             typename vector<Vertex<T>*>::iterator iter;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
-                bredthFirstSearch(iter->getData);
+                getNumberOfShortestPaths((*iter)->getData());
             }
         }
 };

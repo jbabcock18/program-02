@@ -13,34 +13,25 @@ int main(int argc, const char * argv[]) {
     g.addVertex("Jack");
     g.addVertex("Christine");
     g.addVertex("Duke");
-    g.addVertex("Granny");
-    g.addVertex("Pops");
     g.addVertex("Mom");
     g.addVertex("Dad");
-    g.addVertex("Alex");
-    g.addVertex("Zurlo");
     g.addEdge("Jack", "Christine");
     g.addEdge("Jack", "Duke");
-    g.addEdge("Duke", "Christine");
-    g.addEdge("Jack", "Granny");
-    g.addEdge("Pops", "Jack");
-    g.addEdge("Alex", "Zurlo");
-    g.addEdge("Christine", "Mom");
+    g.addEdge("Duke", "Dad");
     g.addEdge("Christine", "Dad");
-    g.addEdge("Alex", "Dad");
-    g.addEdge("Pops", "Dad");
-    g.addEdge("Jack", "Dad");
+    g.addEdge("Dad", "Mom");
     g.list();
     vector<string> dfs;
     vector<string> bfs;
-    bfs = g.bredthFirstSearch("Duke");
+    bfs = g.bredthFirstSearch("Jack");
     //g.depthFirstSearch("Duke", dfs);
     for (int i = 0; i < bfs.size(); i++) {
         cout << bfs[i] << ", ";
     }
     cout << endl;
     //g.reset();
-    g.makeConnection("Duke", "Dad");
+    g.makeConnection("Jack", "Dad");
+    g.getNumberOfShortestPaths("Jack");
     return 0;
 
 }

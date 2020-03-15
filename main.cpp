@@ -15,11 +15,14 @@ int main(int argc, const char * argv[]) {
     g.addVertex("Duke");
     g.addVertex("Mom");
     g.addVertex("Dad");
+    g.addVertex("Pops");
     g.addEdge("Jack", "Christine");
     g.addEdge("Jack", "Duke");
     g.addEdge("Duke", "Dad");
     g.addEdge("Christine", "Dad");
     g.addEdge("Dad", "Mom");
+    g.addEdge("Christine", "Mom");
+    g.addEdge("Dad", "Pops");
     g.list();
     vector<string> dfs;
     vector<string> bfs;
@@ -31,7 +34,8 @@ int main(int argc, const char * argv[]) {
     cout << endl;
     //g.reset();
     g.makeConnection("Jack", "Dad");
-    g.getNumberOfShortestPaths("Jack");
+    //g.getNumberOfShortestPaths("Jack");
+    g.findCommunities();
     return 0;
 
 }

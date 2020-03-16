@@ -1,6 +1,7 @@
 // Jack Babcock
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <queue>
 #include <stack>
@@ -38,6 +39,14 @@ class Vertex {
             Edge<T>* e = new Edge<T>(edge);
             edges.push_back(e);
         }
+        void removeEdge(T dest) {
+            for (int i = 0; i < edges.size(); i++) {
+                if (edges[i]->getVertex()->getData() == dest) {
+                    delete edges[i];
+                    edges.erase(edges.begin() + i);
+                }
+            }
+        }
 
         vector<Edge<T>* > getEdges() {
             return edges;
@@ -65,9 +74,11 @@ class Edge {
     private:
         Vertex<T>* vtx;
         double betweennesss;
+        double total;
     public:
         Edge(Vertex<T>* v): vtx(v) {
             betweennesss = 1;
+            total = 0;
         }
         Vertex<T>* getVertex() {
             return vtx;
@@ -78,7 +89,15 @@ class Edge {
         double getBetweenness() {
             return betweennesss;
         }
+        void updateBetweenness() {
+            total += betweennesss;
+            betweennesss = 1;
+        }
+        double getTotalBetweenness() {
+            return total;
+        }
         void resetBetweenness() {
+            total = 0;
             betweennesss = 1;
         }
 };
@@ -100,9 +119,25 @@ class Graph {
         void reset() {
             typename vector<Vertex<T>*>::iterator iter;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
+
                 (*iter)->unvisit();
                 (*iter)->layer = 1;
                 (*iter)->equalPaths = 1;
+                vector<Edge<T>*> edges = (*iter)->getEdges();
+                for (int i = 0; i < edges.size(); i++) {
+                    edges[i]->updateBetweenness();
+                }
+            }
+        }
+
+        void hardReset() {
+            reset();
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                vector<Edge<T>*> edges = (*iter)->getEdges();
+                for (int i = 0; i < edges.size(); i++) {
+                    edges[i]->resetBetweenness();
+                }
             }
         }
 
@@ -121,7 +156,7 @@ class Graph {
             cout << endl;
         }
 
-        void addEdge(T const &source, T const &dest) {
+        void addEdge(T source, T dest) {
             bool sourceFound = false;
             bool destFound = false;
             Vertex<T>* sourceEdge;
@@ -149,42 +184,92 @@ class Graph {
 
         }
 
-        void depthFirstSearch(T startNode, vector<T> &output) {
+        void removeEdge(T src, T edge) {
+            typename vector<Vertex<T>*>::iterator iter;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == src) {
+                    (*iter)->removeEdge(edge);
+                }
+            }
+            // remove both cuz undirected
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                if ((*iter)->getData() == edge) {
+                    (*iter)->removeEdge(src);
+                }
+            }
+        }
+
+        void fillGraph(string filename) {
+            ifstream inFile;
+            inFile.open(filename);
+            if (inFile.is_open()) {
+                string firstLine;
+                string vertex;
+                inFile >> firstLine;
+                while (!inFile.eof()) {
+                    inFile >> vertex;
+                    if (vertex != "[undirected]") {
+                        addVertex(vertex);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                string src = "";
+                string dash = "-";
+                string dest = "";
+                while (!inFile.eof()) {
+                    inFile >> src >> dash >> dest;
+                    addEdge(src, dest);
+                }
+            }
+            inFile.close();
+        }
+
+        void depthFirstSearch(T startNode) {
             typename vector<Vertex<T>*>::iterator iter;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
                 if ((*iter)->getData() == startNode && (*iter)->isVisited() == false) {
-                    output.push_back(startNode);
                     (*iter)->visit(); // set visited to true
-                    for (int i = 0; i < (*iter)->getEdges().size(); i++) {
-                       depthFirstSearch((*iter)->getEdges()[i]->getVertex()->getData() , output);
+                    vector<Edge<T>*> edges = (*iter)->getEdges();
+                    for (int i = 0; i < edges.size(); i++) {
+                        if (edges[i]->getVertex()->isVisited() == false) {
+                            cout << "(" << startNode
+                                 << ","
+                                 << edges[i]->getVertex()->getData() << "), ";
+                        }
+                        depthFirstSearch(edges[i]->getVertex()->getData());
                     }
                 }
             }
         }
 
-        vector<T> bredthFirstSearch(T startNode) {
+        void bredthFirstSearch(T startNode) {
             typename vector<Vertex<T>*>::iterator iter;
             queue<Vertex<T>*> q;
-            vector<T> output;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
                 if ((*iter)->getData() == startNode) {
                     q.push(*iter);
                     (*iter)->visit();
                 }
             }
+            cout << "{";
             while (!q.empty()) {
-                output.push_back(q.front()->getData());
                 vector<Edge<T>* > nextEdges = q.front()->getEdges();
                 for (int i = 0; i < nextEdges.size(); i++) {
-                    if (!nextEdges[i]->getVertex()->isVisited()) { // Visiting a new node
+                    if (!nextEdges[i]->getVertex()->isVisited()) {
+                        cout << "(" << q.front()->getData() 
+                             << "," 
+                             << nextEdges[i]->getVertex()->getData()
+                             << "), ";
                         q.push(nextEdges[i]->getVertex());
                         nextEdges[i]->getVertex()->visit();
                     }
                 }
                 q.pop();
             }
-            return output;
-            
+            cout << "}" << endl;
+            reset();
         }
 
         void makeConnection(T src, T dest) {
@@ -221,11 +306,13 @@ class Graph {
                 path.push(vtx->getData());
                 vtx = vtx->cameFrom;
             }
-            while (!path.empty()) {
-                cout << path.top() << " -> ";
+            cout << "{";
+            while (path.size() != 1) {
+                cout << "(" << path.top() << ",";
                 path.pop();
+                cout << path.top() << "), ";
             }
-            cout << endl;
+            cout << "}" << endl;
         }
 
         void getNumberOfShortestPaths(T startNode) {
@@ -260,7 +347,6 @@ class Graph {
         }
 
         double findBetweenness(Vertex<T>* v, Edge<T>* e) {
-            cout << v->getData() << "->" <<  e->getVertex()->getData() << endl;
             typename vector<Vertex<T>*>::iterator iter;
             Vertex<T>* vtx = e->getVertex();
             vector<Edge<T>* > edges = vtx->getEdges();
@@ -272,21 +358,46 @@ class Graph {
                     e->addBetweennesss(btw);
                 }
             }
-            cout << vtx->getData() << ": " <<  e->getBetweenness() << endl;
             return e->getBetweenness();
 
         }
 
-        void findCommunities() {
+        void removeBetweeniest() {
+            typename vector<Vertex<T>*>::iterator iter;
+            Vertex<T>* maxVtx;
+            Edge<T>* maxEdge;
+            for (iter = graph.begin(); iter != graph.end(); iter++) {
+                vector<Edge<T>*> edges = (*iter)->getEdges();
+                for (int i = 0; i < edges.size(); i++) {
+                    //cout << (*iter)->getData() << "->" << edges[i]->getVertex()->getData() << "= " << edges[i]->getTotalBetweenness() << endl;
+                    if (edges[i]->getTotalBetweenness() > maxEdge->getTotalBetweenness()) {
+                        maxVtx = (*iter);
+                        maxEdge = edges[i];
+                    }
+                }
+            }
+            cout << maxVtx->getData() << "->"
+                 << maxEdge->getVertex()->getData()
+                 << "= "
+                 << maxEdge->getTotalBetweenness() << endl;
+            removeEdge(maxVtx->getData(), maxEdge->getVertex()->getData());
+
+        }
+
+        void calculateBetweenness() {
+            hardReset();
             typename vector<Vertex<T>*>::iterator iter;
             for (iter = graph.begin(); iter != graph.end(); iter++) {
                 getNumberOfShortestPaths((*iter)->getData());
-                cout << endl << "START: " << (*iter)->getData() << endl;
                 vector<Edge<T>* > edges = (*iter)->getEdges();
                 for (int i = 0; i < edges.size(); i++) {
                     findBetweenness((*iter), edges[i]);
                 }
             }
+        }
+
+        void findCommunities() {
+            
         }
 };
 

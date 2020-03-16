@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jackbabcock/Desktop/Algorithms/program-02/Graph.h
+iostream
+-
+fstream
+-
+vector
+-
+queue
+-
+stack
+-
+
+/Users/jackbabcock/Desktop/Algorithms/program-02/main.cpp
+iostream
+-
+vector
+-
+string
+-
+Graph.h
+/Users/jackbabcock/Desktop/Algorithms/program-02/Graph.h
+

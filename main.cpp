@@ -10,17 +10,19 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     Graph<string> g;
-    g.fillGraph("football.txt");
+    g.fillGraph("karate.txt");
     g.list();
 
-    g.bredthFirstSearch("Hawaii");
-    cout << endl;
+    //g.bredthFirstSearch("9");
+    //cout << endl;
 
-    g.depthFirstSearch("Hawaii");
-    cout << endl << endl;
+    //g.depthFirstSearch("8");
+    //cout << endl << endl;
 
-    g.makeConnection("Hawaii", "Texas");
+    g.makeConnection("8", "27");
 
+    g.calculateBetweenness();
+    g.removeBetweeniest();
     g.calculateBetweenness();
     g.removeBetweeniest();
     //g.list();

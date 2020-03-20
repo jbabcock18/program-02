@@ -37,6 +37,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.15.3/CMakeCCompiler.cmake"
   "CMakeFiles/3.15.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.15.3/CMakeSystem.cmake"
+  "../commands.txt"
   )
 
 # The corresponding makefile is:
@@ -47,6 +48,7 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "commands.txt"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 

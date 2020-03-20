@@ -474,5 +474,44 @@ class Graph {
                 }
             }
         }
+
+        void followDirections(string filename) {
+            ifstream inFile;
+            inFile.open(filename);
+            if (inFile.is_open()) {
+                string command;
+                string arg1;
+                string arg2;
+                while (!inFile.eof()) {
+                    inFile >> command;
+                    if (command == "or") {
+                        inFile >> arg1;
+                        fillGraph(arg1);
+                    }
+                    else if (command == "ow") {
+                        inFile >> arg1;
+                        setOutputFile(arg1);
+                    }
+                    else if (command == "dfs") {
+                        inFile >> arg1;
+                        depthFirstSearchStyling(arg1);
+                    }
+                    else if (command == "bfs") {
+                        inFile >> arg1;
+                        bredthFirstSearch(arg1);
+                    }
+                    else if (command == "mc" ) {
+                        inFile >> arg1 >> arg2;
+                        makeConnection(arg1, arg2);
+                    }
+                    else if (command == "dc") {
+                        findCommunities();
+                    }
+                    else {
+                        cout << "Error with command file" << endl;
+                    }
+                }
+            }
+        }
 };
 

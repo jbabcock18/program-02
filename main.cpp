@@ -10,6 +10,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     Graph<string> g;
+    g.followDirections(argv[1]);
     g.fillGraph("football.txt");
     g.setOutputFile("output.txt");
     g.depthFirstSearchStyling("SouthernMethodist");

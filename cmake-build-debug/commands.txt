@@ -1,6 +1,6 @@
 or football.txt
 ow output.txt
 dfs Hawaii
-bfs SouthernMethodist
+bfs Hawaii
 mc Texas Navy
 dc

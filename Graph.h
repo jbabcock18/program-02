@@ -479,9 +479,9 @@ class Graph {
             ifstream inFile;
             inFile.open(filename);
             if (inFile.is_open()) {
-                string command = "";
-                string arg1 = "";
-                string arg2 = "";
+                string command;
+                string arg1;
+                string arg2;
                 while (!inFile.eof()) {
                     inFile >> command;
                     if (command == "or") {

@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 set (input01 "commands.txt")
+set (input02 "karate.txt")
+set (input03 "football.txt")
 
 foreach(file IN LISTS input01 input02 input03 input04)
     configure_file(${file} ${file} COPYONLY)

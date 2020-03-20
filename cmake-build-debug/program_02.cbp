@@ -94,5 +94,11 @@
 		<Unit filename="/Users/jackbabcock/Desktop/Algorithms/program-02/commands.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
+		<Unit filename="/Users/jackbabcock/Desktop/Algorithms/program-02/football.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/jackbabcock/Desktop/Algorithms/program-02/karate.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
 	</Project>
 </CodeBlocks_project_file>

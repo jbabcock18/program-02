@@ -10,22 +10,13 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     Graph<string> g;
-    g.fillGraph("karate.txt");
-    g.list();
+    g.fillGraph("football.txt");
+    g.setOutputFile("output.txt");
+    g.depthFirstSearchStyling("SouthernMethodist");
+    g.bredthFirstSearch("Hawaii");
+    g.makeConnection("Texas", "Navy");
+    g.findCommunities();
 
-    //g.bredthFirstSearch("9");
-    //cout << endl;
-
-    //g.depthFirstSearch("8");
-    //cout << endl << endl;
-
-    g.makeConnection("8", "27");
-
-    g.calculateBetweenness();
-    g.removeBetweeniest();
-    g.calculateBetweenness();
-    g.removeBetweeniest();
-    //g.list();
     return 0;
 
 }
